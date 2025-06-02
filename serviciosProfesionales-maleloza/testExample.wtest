@@ -1,0 +1,40 @@
+import example.*
+
+describe "group of tests for pepita" {
+  var uDeSanMartin = new Universidad(provincia = buenosAires, honorariosRecomendados = 3500)
+  var uDeRosario = new Universidad(provincia = santaFe, honorariosRecomendados = 2800)
+  var uDeCorrientes = new Universidad(provincia = corrientes, honorariosRecomendados = 4200)
+  var uDeHurlingham = new Universidad(provincia = buenosAires, honorariosRecomendados = 8800)
+
+  var juana = new ProfesionalDeUniversidad(universidad = uDeRosario)
+  var melina = new ProfesionalDelLitoral(universidad = uDeCorrientes)
+  var rocio = new ProfesionalLibre(universidad = uDeHurlingham, honorarios = 5000, provincias = [santaFe, cordoba, buenosAires])
+  var luciana = new ProfesionalLibre(universidad = uDeRosario, honorarios = 3200, provincias = [santaFe, entreRios])
+
+  var empresa1 = new Empresa(trabajadores = #{juana, melina, rocio, luciana}, honorarioDeReferencia = 3500)
+  test "Dos profesionales de la empresa1 estudiaron en Rosario, uno en Hurlingham, ninguno (o sea cero) en San Martín" {
+    assert.equals(2, empresa1.cuantosEstudiaronEn(uDeRosario).size())
+    assert.equals(1, empresa1.cuantosEstudiaronEn(uDeHurlingham).size())
+    assert.equals(0, empresa1.cuantosEstudiaronEn(uDeSanMartin).size())
+  }
+
+  test "En la empresa1, la única profesinal cara es Rocío" {
+    assert.equals(1, empresa1.profesionalesCaros().size())
+    assert.that(empresa1.profesionalesCaros().contains(rocio))
+  }
+
+  test "Las universidades formadoras de los profesionales de la empresa1 son las de Rosario, Corrientes y Hurlingam" {
+    assert.equals(#{uDeRosario, uDeCorrientes, uDeHurlingham}, empresa1.universidadesFormadoras())
+  }
+
+  test "El profesional más barato de la empresa1 es Juana" {
+    assert.equals(juana, empresa1.profesionalMasBarato())
+  }
+
+  test "Luciana suma las provincias de Corrientes y Misiones, y la empresa deja de ser de gente acotada" {
+    luciana.sumarProvincia(corrientes)
+    luciana.sumarProvincia(misiones)
+
+    assert.that(empresa1.genteAcotada())
+  }
+}
